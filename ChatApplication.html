@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Chat</title>
+</head>
+<body>
+  <div id="chat-log"></div>
+  <input type="text" id="message-input" placeholder="Type your message...">
+  <button id="send-button">Send</button>
+
+  <script>
+    const chatLog = document.getElementById('chat-log');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const socket = new WebSocket('ws://localhost:8080'); // Replace with your server address
+
+    // Event handler for when the WebSocket connection is opened
+    socket.onopen = () => {
+      console.log('Connected to the server.');
+    };
+
+    // Event handler for when a message is received from the server
+    socket.onmessage = (event) => {
+      const message = event.data;
+      appendMessage(message);
+    };
+
+    // Event handler for when an error occurs in the WebSocket connection
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    // Event handler for when the WebSocket connection is closed
+    socket.onclose = () => {
+      console.log('Disconnected from the server.');
+    };
+
+    // Event handler for the send button
+    sendButton.onclick = () => {
+      const message = messageInput.value;
+      if (message) {
+        socket.send(message);
+        messageInput.value = '';
+      }
+    };
+
+    // Function to append a message to the chat log
+    function appendMessage(message) {
+      const messageElement = document.createElement('div');
+      messageElement.innerText = message;
+      chatLog.appendChild(messageElement);
+    }
+  </script>
+</body>
+</html>
